@@ -144,7 +144,7 @@ compile.el version by checking if
                     2 3 nil 2 1 (6 compilation-error-face)
                     )
                   compilation-error-regexp-alist))
-      
+
       (setq compilation-error-regexp-alist
             (cons '("----------\n\\([0-9]+. WARNING in \\(.*\\)\n (at line \\([0-9]+\\))\n\\(\\(.*\n\\)+?\\).*^+\n\\(.*\n\\)\\)"
                     2 3 nil 1 1 (6 compilation-warning-face)
@@ -609,7 +609,7 @@ source and class files.
   :type 'boolean)
 
 (defcustom jde-compile-enable-kill-buffer -1
-  "* Time in seconds to display the compilation buffer before 
+  "* Time in seconds to display the compilation buffer before
 `jde-compile-finish-kill-buffer' will kill the compilation buffer.
 
 If less than zero (or nil), do not kill the compilation buffer.
@@ -1219,7 +1219,25 @@ If t (or other non-nil non-number) then kill in 2 secs."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                                                            ;;
-;; Eclipse Compiler                                                             ;;
+;; J2SDK 1.7 Compiler                                                         ;;
+;;                                                                            ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defclass jde-compile-javac-17 (jde-compile-javac-16)
+  ()
+  "Class of JDK 1.7 javac compilers.")
+
+(defmethod initialize-instance ((this jde-compile-javac-17) &rest fields)
+ ;; Call parent initializer.
+
+  (call-next-method)
+
+  ;; Set compiler version.
+  (oset this version "1.7"))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                                            ;;
+;; Eclipse Compiler                                                           ;;
 ;;                                                                            ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defclass jde-compile-ejc-server (jde-compile-compiler)
@@ -1241,7 +1259,7 @@ If t (or other non-nil non-number) then kill in 2 secs."
 	   (source-path
 	    (jde-normalize-path buffer-file-name))
 	   (arg-array (concat "new String[] {\"" source-path "\"")))
-    
+
       (if args
 	  (setq arg-array
 		(concat
@@ -1254,7 +1272,7 @@ If t (or other non-nil non-number) then kill in 2 secs."
 		  ","))))
 
       (setq arg-array (concat arg-array "}"))
-     
+
       (with-current-buffer (oref (oref this buffer) buffer)
 
 	(insert "CompileServer output:\n\n")
@@ -1302,7 +1320,9 @@ If t (or other non-nil non-number) then kill in 2 secs."
    (jde-compile-javac-13 "javac 1.3.x")
    (jde-compile-javac-14 "javac 1.4.x")
    (jde-compile-javac-15 "javac 1.5.x")
-   (jde-compile-javac-16 "javac 1.6.x"))
+   (jde-compile-javac-16 "javac 1.6.x")
+   (jde-compile-javac-17 "javac 1.7.x")
+  )
   "List of supported javac compilers.")
 
 (defun jde-compile-get-javac ()
